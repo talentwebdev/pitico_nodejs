@@ -22,7 +22,8 @@ const broadcastTransaction = async (SLPInstance, wallet, { ...args }) => {
     switch (TRANSACTION_TYPE) {
       case "IS_CREATING":
         config.batonReceiverAddress = slpAddress;
-        config.decimals = 0;
+        //config.decimals = 0;
+        config.decimals = config.decimals || 0;
         config.documentUri = config.documentUri || "developer.bitcoin.com";
         config.tokenReceiverAddress = slpAddress;
         createTransaction = async config => SLPInstance.TokenType1.create(config);
@@ -39,6 +40,9 @@ const broadcastTransaction = async (SLPInstance, wallet, { ...args }) => {
       default:
         break;
     }
+
+    console.log("Broadcasts Transaction", config);
+    
     const broadcastedTransaction = await createTransaction(config);
 
     let link;
@@ -47,13 +51,16 @@ const broadcastTransaction = async (SLPInstance, wallet, { ...args }) => {
     } else {
       link = `https://explorer.bitcoin.com/tbch/tx/${broadcastedTransaction}`;
     }
+    
 
     return link;
+    
   } catch (err) {
     console.error(`Error in createToken: `, err);
     console.log(`Error message: ${err.message}`);
     throw err;
   }
+  
 };
 
 export default withSLP(broadcastTransaction);

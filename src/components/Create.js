@@ -21,7 +21,9 @@ const Create = ({ history }) => {
     tokenSymbol: "",
     documentHash: "",
     documentUri: "",
-    amount: ""
+    amount: "",
+    documentUrl: "",
+    decimals: "0",
   });
 
   async function handleCreateToken() {
@@ -34,8 +36,10 @@ const Create = ({ history }) => {
       return;
     }
 
+    //console.log("handleCreateToken data:", data);
+    
     setLoading(true);
-    const { tokenName, tokenSymbol, documentHash, documentUri, amount } = data;
+    const { tokenName, tokenSymbol, documentHash, documentUri, documentUrl, decimals, amount } = data;
     try {
       const docUri = documentUri || "pitico.cash";
       const link = await createToken(wallet, {
@@ -43,7 +47,9 @@ const Create = ({ history }) => {
         symbol: tokenSymbol,
         documentHash,
         docUri,
-        initialTokenQty: amount
+        initialTokenQty: amount,        
+        documentUri: documentUrl,
+        decimals
       });
 
       notification.success({
@@ -155,7 +161,23 @@ const Create = ({ history }) => {
                   onChange={e => handleChange(e)}
                   required
                 />
-              </Form.Item>
+              </Form.Item>            
+              <Form.Item>
+                <Input
+                  placeholder="URL e.g.: developer.bitcoin.com"
+                  name="documentUrl"
+                  onChange={e => handleChange(e)}
+                  required
+                />
+              </Form.Item>            
+              <Form.Item>
+                <Input
+                  placeholder="Decimal e.g.: 0"
+                  name="decimals"
+                  onChange={e => handleChange(e)}
+                  required
+                />
+              </Form.Item>            
               <Form.Item
                 validateStatus={!data.dirty && Number(data.amount) <= 0 ? "error" : ""}
                 help={!data.dirty && Number(data.amount) <= 0 ? "Should be greater than 0" : ""}
